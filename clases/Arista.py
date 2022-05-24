@@ -9,6 +9,12 @@ class Arista:
         self.destino = destino
         self.peso = peso
 
+    @classmethod
+    # constructor json
+    def fromjson(cls, json_string):
+        json_dict = json_string.loads(json_string)
+        return Arista(**json_dict)
+
     """————————————————————————————————————————————GETS | SETS————————————————————————————————————————————————————"""
 
     # Set - Get | origen

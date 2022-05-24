@@ -5,11 +5,9 @@ from copy import copy #para realizar copias de objetos
 import sys
 from clases.Arista import *
 from clases.Vertice import *
+import json
 from typing import List
 from collections import deque
-
-
-
 
 class Grafo:
 

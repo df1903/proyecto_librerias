@@ -1,0 +1,46 @@
+[
+  {
+    "nombre": "Libreria Euler",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Gadner",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Voronoi",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Gauss",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Konisberg",
+    "libros": 100
+  },
+  {
+    "nombre": "Casita",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Richter",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Fibonacci",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Fahrenheit",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Hilbert",
+    "libros": 100
+  },
+  {
+    "nombre": "Libreria Celsius",
+    "libros": 100
+  }
+]
