@@ -1,21 +1,29 @@
 """————————————————
-   Vertice class
+   Clase vertice
 ———————————————————"""
 class Vertice:
 
-    # builder
-    def __init__(self, dato):
-        self.dato = dato
+    # constructor
+    def __init__(self, nombre, libros):
+        self.nombre = nombre
+        self.libros = libros
         self.listaAdyacentes = []
 
     """————————————————————————————————————————————GETS | SETS————————————————————————————————————————————————————"""
 
-    # Set - Get | dato
-    def getDato(self):
-            return self.dato
+    # Set - Get | nombre
+    def getNombre(self):
+        return self.nombre
 
-    def setDato(self,dato):
-        self.dato = dato
+    def setNombre(self, nombre):
+        self.nombre = nombre
+
+    # Set - Get | libros
+    def getLibros(self):
+            return self.libros
+
+    def setLibros(self, libros):
+        self.libros = libros
 
     # Set - Get | lista adyacentes
     def getListaAdyacentes(self):
@@ -25,6 +33,7 @@ class Vertice:
         self.listaAdyacentes = listaAdyacentes
 
 
-    """————————————————————————————————————————————METHODS———————————————————————————————————————————————————————"""
+    """————————————————————————————————————————————FUNCIONES———————————————————————————————————————————————————————"""
+
 
 

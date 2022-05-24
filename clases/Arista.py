@@ -1,9 +1,9 @@
 """————————————————
-   Arista class
+   Clase arista
 ———————————————————"""
 class Arista:
 
-    # builder
+    # constructor
     def __init__(self, origen, destino, peso):
         self.origen = origen
         self.destino = destino
@@ -32,5 +32,5 @@ class Arista:
     def setPeso(self, peso):
         self.peso = peso
 
-    """—————————————————————————————————————————————FUNCTIONS—————————————————————————————————————————————————————"""
+    """—————————————————————————————————————————————FUNCIONES—————————————————————————————————————————————————————"""
 

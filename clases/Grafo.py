@@ -1,5 +1,5 @@
 """————————————————
-   Grafo class
+   Clase grafo
 ———————————————————"""
 from copy import copy #para realizar copias de objetos
 import sys
@@ -8,9 +8,12 @@ from clases.Vertice import *
 from typing import List
 from collections import deque
 
+
+
+
 class Grafo:
 
-    # builder
+    # constructor
     def __init__(self):
         self.listaVertices = []
         self.listaAristas = []
@@ -31,350 +34,377 @@ class Grafo:
     def setListaAristas(self, listaAristas):
         self.listaAristas = listaAristas
 
-    """—————————————————————————————————————————VERTEX METHODS———————————————————————————————————————————————————"""
+    """—————————————————————————————————————————FUNCIONES VERTICE————————————————————————————————————————————————"""
 
-    # enter vertex
-    def ingresarVertice(self, dato):
-        if not self.existeVertice(dato, self.listaVertices):
-            self.listaVertices.append(Vertice(dato))
+    # ingresar vertice
+    def ingresarVertice(self, nombre, libros):
+        if not self.existeVertice(nombre, self.listaVertices):
+            self.listaVertices.append(Vertice(nombre, libros))
 
-    # vertex exists
-    def existeVertice(self, dato, listaVertices):
-        for i in range(len(listaVertices)):
-            if dato == listaVertices[i].getDato():
+    # existe vertice
+    def existeVertice(self, nombre, listaVertices):
+        for i in listaVertices:
+            if nombre == i.getNombre():
                 return True
         return False
 
-    # show Vertices
+    # mostrar vertices
     def mostrarVertices(self):
         print("                                    VERTICES")
-        for i in range(len(self.listaVertices)):
-            print(i+1, "- {0}".format(self.listaVertices[i].getDato()))
+        for i in self.listaVertices:
+            # print(i+1, "- {0}".format(i.getNombre()))
+            print(i.getNombre())
         # return False
 
-    # get Vertex
+    # obtener vertice
     def obtenerVertice(self, origen, lista):
-        for i in range(len(lista)):
-            if origen == lista[i].getDato():
-                return lista[i]
+        for i in lista:
+            if origen == i.getNombre():
+                return i
 
-    """—————————————————————————————————————————EDGES METHODS————————————————————————————————————————————————————"""
+    """—————————————————————————————————————————FUNCIONES ARISTA—————————————————————————————————————————————————"""
 
-    # enter edge
+    # ingresar arista
     def ingresarArista(self, origen, destino, peso):
-        if not self.verificarListaAristas(origen, destino, self.listaAristas):
+        if not self.existeArista(origen, destino, self.listaAristas):
             if self.existeVertice(origen, self.listaVertices) and self.existeVertice(destino, self.listaVertices):
                 self.listaAristas.append(Arista(origen, destino, peso))
                 self.obtenerVertice(origen, self.listaVertices).getListaAdyacentes().append(destino)
+                # return True
+        # return False
+
+    # existe arista
+    def existeArista(self, origen, destino, lista):
+        for i in lista:
+            if origen == i.getOrigen() and destino == i.getDestino():
                 return True
         return False
 
-    # check List edges
-    def verificarListaAristas(self, origen, destino, lista):
-        for i in range(len(lista)):
-            if origen == lista[i].getOrigen() and destino == lista[i].getDestino():
-                return True
-        return False
-
-    # show edges
+    # mostrar aristas
     def mostrarAristas(self):
         print("                                    ARISTAS")
-        for i in range(len(self.listaAristas)):
+        for i in self.listaAristas:
             print("| Origen: {0}  →  Destino: {1}  |  Peso: {2} |"
-                  .format(self.listaAristas[i].getOrigen(),
-                          self.listaAristas[i].getDestino(),
-                          self.listaAristas[i].getPeso()))
+                  .format(i.getOrigen(),
+                          i.getDestino(),
+                          i.getPeso()))
 
-    # show adjacencies
+    # mostrar adyacencias
     def mostrarAdyacencias(self):
         print("                                    ADYACENCIAS")
-        for i in range(len(self.listaVertices)):
+        for i in self.listaVertices:
             print("| vértice: {0} |  Adyacencias: {1} |"
-                  .format(self.listaVertices[i].getDato(),
-                          self.listaVertices[i].getListaAdyacentes()))
+                  .format(i.getDato(),
+                          i.getListaAdyacentes()))
 
     """—————————————————————————————————————————————FUNCTIONS————————————————————————————————————————————————————————"""
 
-    # are there wells?
-    def existenPozos(self):
-        for i in range(len(self.listaVertices)):
-            if not self.listaVertices[i].getListaAdyacentes():
-                return print("Pozo --> {0}".format(self.listaVertices[i].getDato()))
-        return print("El grafo no tiene Pozos")
+    # convertir dirigido a no dirigido
+    def nodirigido(self):
+        lista = copy(self.listaAristas)
+        for i in lista:
+            crear = True
+            for j in lista:
+                if i.getOrigen() == j.getDestino() and i.getDestino() == j.getOrigen():
+                    crear = False
+                    break
+            if crear:
+                self.ingresarArista(i.getDestino(), i.getOrigen(), i.getPeso())
 
-    # are there sources?
-    def existenFuentes(self):
-        for i in range(len(self.listaVertices)):
-            if self.listaVertices[i].getListaAdyacentes():
-                return print("Fuente --> {0}".format(self.listaVertices[i].getDato()))
-        return print("El grafo no tiene Fuentes")
+    # convertir no dirigido a dirigido
+    def dirigido(self):
+        lista = copy(self.listaAristas)
+        for i in lista:
+            arista = False
+            for j in lista:
+                if i.getOrigen() == j.getDestino() and i.getDestino() == j.getOrigen():
+                    arista = j
+                    break
+            if arista:
+                lista.pop(lista.index(arista))
+        self.setListaAristas(lista)
 
-    # 1)smallest to largest edges
-    def minMaxAristas(self, entorno):
-        if entorno == (len(self.listaAristas)):
-            return
-        self.ordenarMinMax(entorno, entorno + 1)
-        return self.minMaxAristas(entorno + 1)
+    # # are there wells?
 
-    def ordenarMinMax(self, entorno, iter):
-        if iter == (len(self.listaAristas)):
-            return
-        if self.listaAristas[entorno].getPeso() > self.listaAristas[iter].getPeso():
-            aux = self.listaAristas[entorno]
-            self.listaAristas[entorno] = self.listaAristas[iter]
-            self.listaAristas[iter] = aux
-        return self.ordenarMinMax(entorno, iter + 1)
-
-    # 1.1)largest to smallest edges
-    def maxMinAristas(self, entorno):
-        if entorno == (len(self.listaAristas)):
-            return
-        self.ordenarMaxMin(entorno, entorno + 1)
-        return self.maxMinAristas(entorno + 1)
-
-    def ordenarMaxMin(self, entorno, iter):
-        if iter == (len(self.listaAristas)):
-            return
-        if self.listaAristas[entorno].getPeso() < self.listaAristas[iter].getPeso():
-            aux = self.listaAristas[entorno]
-            self.listaAristas[entorno] = self.listaAristas[iter]
-            self.listaAristas[iter] = aux
-        return self.ordenarMaxMin(entorno, iter + 1)
-
-
-    # 2)degree of the vertices
-    # def gradoVertices(self, entorno):
-    #     if entorno == (len(self.listaVertices)):
-    #         return True
-    #     self.gradoVertice(self.listaVertices[entorno], 0, 0)
-    #     return self.gradoVertices01(entorno+1)
+    # def existenPozos(self):
+    #     for i in range(len(self.listaVertices)):
+    #         if not self.listaVertices[i].getListaAdyacentes():
+    #             return print("Pozo --> {0}".format(self.listaVertices[i].getDato()))
+    #     return print("El grafo no tiene Pozos")
     #
-    # def gradoVertice(self, vertice, entorno, gradoVertice):
+    # # are there sources?
+    # def existenFuentes(self):
+    #     for i in range(len(self.listaVertices)):
+    #         if self.listaVertices[i].getListaAdyacentes():
+    #             return print("Fuente --> {0}".format(self.listaVertices[i].getDato()))
+    #     return print("El grafo no tiene Fuentes")
+    #
+    # # 1)smallest to largest edges
+    # def minMaxAristas(self, entorno):
     #     if entorno == (len(self.listaAristas)):
-    #         print("El grado del vertice {} es {}".format(vertice.getDato(), gradoVertice))
     #         return
-    #     if vertice.getDato() == self.listaAristas[entorno].getOrigen() or vertice.getDato() == self.listaAristas[entorno].getDestino():
-    #         gradoVertice += 1
-    #     self.gradoVertice(vertice, entorno+1, gradoVertice)
-
-    def gradoVertices(self, entorno, listaGrados):
-        if entorno == 0:
-            for i in range(len(self.listaVertices)):
-                listaGrados.append(0)
-        if entorno == (len(self.listaAristas)):
-            return listaGrados
-        for i in range(len(self.listaVertices)):
-            if self.listaVertices[i].getDato() == self.listaAristas[entorno].getOrigen() or self.listaVertices[i].getDato() == self.listaAristas[entorno].getDestino():
-                listaGrados[i] += 1
-        return self.gradoVertices(entorno+1,listaGrados)
-
-    def mostrarGradoVertices(self):
-        print("                                 GRADOS DE LOS VERTICES")
-        listaGrados = self.gradoVertices(0,[])
-        for i in range(len(self.listaVertices)):
-            print("{} Grado({})".format(self.listaVertices[i].getDato(), listaGrados[i]))
-
-    # 3)vertex highest degree
-    def verticeMayorGrado(self):
-        listaGrados = self.gradoVertices(0,[])
-        vertice = [0,0]
-        for i in range(len(self.listaVertices)):
-            if listaGrados[i] > vertice[1]:
-                vertice[0] = i
-                vertice[1] = listaGrados[i]
-        print("{} con grado de {} es el vertice con mayor grado".format(self.listaVertices[vertice[0]].getDato(),vertice[1]))
-
-    # 4)average adjacencies list
-    def promedioListaAdyacencias(self):
-        adyacencias = 0
-        for i in range(len(self.listaVertices)):
-            adyacencias += len(self.listaVertices[i].getListaAdyacentes())
-        adyacencias = adyacencias/len(self.listaVertices)
-        print("El promedio de la lista de adyacencias es: ",adyacencias)
-
-    # 5)Show the wells
-    def pozos(self,entorno,listaPozos):
-        if entorno == 0:
-            for i in range(len(self.listaVertices)):
-                listaPozos.append(True)
-        if entorno == (len(self.listaAristas)):
-            return listaPozos
-        for i in range(len(self.listaVertices)):
-            if self.listaVertices[i].getDato() == self.listaAristas[entorno].getOrigen():
-                listaPozos[i] = False
-        return self.pozos(entorno+1, listaPozos)
-
-    def mostrarPozos(self):
-        print("                                    POZOS")
-        listaPozos = self.pozos(0,[])
-        for i in range(len(self.listaVertices)):
-            if listaPozos[i]:
-                print(self.listaVertices[i].getDato())
-
-    # 6)Show the sources
-    def fuentes(self,entorno,listaFuentes):
-        if entorno == 0:
-            for i in range(len(self.listaVertices)):
-                listaFuentes.append(True)
-        if entorno == (len(self.listaAristas)):
-            return listaFuentes
-        for i in range(len(self.listaVertices)):
-            if self.listaVertices[i].getDato() == self.listaAristas[entorno].getDestino():
-                listaFuentes[i] = False
-        return self.fuentes(entorno+1, listaFuentes)
-
-    def mostrarFuentes(self):
-        print("                                   FUENTES")
-        listaFuentes = self.fuentes(0,[])
-        for i in range(len(self.listaVertices)):
-            if listaFuentes[i]:
-                print(self.listaVertices[i].getDato())
-
-    # 7)average edge weight
-    def promedioPesoAristas(self):
-        promedio = 0
-        for i in range(len(self.listaAristas)):
-            promedio += self.listaAristas[i].getPeso()
-        promedio = promedio / len(self.listaAristas)
-        print("El promedio del peso de las aristas es: ",promedio)
-
-    # 8)top artist
-    def aristaMayorPeso(self):
-        aristaMayor= [Arista(0,0,0)]
-        for i in range(len(self.listaAristas)):
-            if aristaMayor[len(aristaMayor)-1].getPeso() < self.listaAristas[i].getPeso():
-               aristaMayor = [self.listaAristas[i]]
-            elif aristaMayor[len(aristaMayor)-1].getPeso() == self.listaAristas[i].getPeso():
-                aristaMayor.append(self.listaAristas[i])
-
-        if len(aristaMayor) == 1:
-            print("Arista mayor peso: {}--> {} peso {}".format(aristaMayor[0].getOrigen(), aristaMayor[0].getDestino(), aristaMayor[0].getPeso()))
-
-        else:
-            print("Las aristas de mayor peso son:")
-            for i in range(len(aristaMayor)):
-                print ("{}--> {} peso {}".format(aristaMayor[i].getOrigen(), aristaMayor[i].getDestino() , aristaMayor[i].getPeso()))
-
-    # 9)
-    def aristaMenorPeso(self):
-        aristaMenor= [Arista(0,0,sys.maxsize)]
-        for i in range(len(self.listaAristas)):
-            if aristaMenor[len(aristaMenor)-1].getPeso() > self.listaAristas[i].getPeso():
-               aristaMenor = [self.listaAristas[i]]
-            elif aristaMenor[len(aristaMenor)-1].getPeso() == self.listaAristas[i].getPeso():
-                aristaMenor.append(self.listaAristas[i])
-
-        if len(aristaMenor) == 1:
-            print("Arista menor peso: {}--> {} peso {}".format(aristaMenor[0].getOrigen(), aristaMenor[0].getDestino(), aristaMenor[0].getPeso()))
-
-        else:
-            print("Las aristas de menor peso son:")
-            for i in range(len(aristaMenor)):
-                print ("{}--> {} peso {}".format(aristaMenor[i].getOrigen(), aristaMenor[i].getDestino() , aristaMenor[i].getPeso()))
-
-    # 10)
-    def verticeAdyacente(self):
-        print("Ahora")
-
-    # 11)
-    def listaAdyacencias(self):
-        lista=[]
-        for i in range(len(self.listaVertices)):
-            for j in range(len(self.listaVertices[i].getListaAdyacentes())):
-                lista.append(self.listaVertices[i].getListaAdyacentes()[j])
-        return lista
-
-    def mostrarListaAdyacentes(self):
-        print("                                  LISTA ADYACENTES")
-        lista = self.listaAdyacencias()
-        for i in range(len(lista)):
-            print(lista[i])
-    # a)
-    def verticesNoContemplados(self, entorno, listaVertices, listaAdyacencias):
-        if entorno == 0:
-            listaAdyacencias = self.listaAdyacencias()
-            for i in range(len(self.listaVertices)):
-                listaVertices.append(True)
-        if entorno == (len(self.listaVertices)):
-            return listaVertices
-        for i in range(len(listaAdyacencias)):
-            if self.listaVertices[entorno].getDato() == listaAdyacencias[i]:
-                listaVertices[entorno] = False
-        return self.verticesNoContemplados(entorno+1, listaVertices, listaAdyacencias)
-
-    def mostrarVerticesNoContemplados(self):
-        print("                                  VERTICES NO CONTEMPLADOS")
-        listaVertices =self.verticesNoContemplados(0, [], [])
-        for i in range(len(listaVertices)):
-            if listaVertices[i]:
-                print(self.listaVertices[i].getDato())
-
-    # b)
-    def adyacenciaMasComun(self, entorno, listaVertices, listaAdyacencias):
-        if entorno == 0:
-            listaAdyacencias = self.listaAdyacencias()
-            for i in range(len(self.listaVertices)):
-                listaVertices.append(0)
-        if entorno == (len(self.listaVertices)):
-            return listaVertices
-        for i in range(len(listaAdyacencias)):
-            if self.listaVertices[entorno].getDato() == listaAdyacencias[i]:
-                listaVertices[entorno] += 1
-        return self.adyacenciaMasComun(entorno+1, listaVertices, listaAdyacencias)
-
-    def mostarAdyacenciaMasComun(self):
-        listaVertices = self.adyacenciaMasComun(0, [], [])
-        comun = 0
-        for i in range(len(listaVertices)):
-            if listaVertices[i] > comun:
-                comun = i
-        print("La adyacencia mas comun es {} con {} ".format(self.listaVertices[comun].getDato(), listaVertices[comun]))
-
-
-
-    def prim(self,origen):
-        visitados = []
-        for i in self.listaVertices:
-            visitados.append(False)
-        caminos= self.obtenerCaminos(origen,[], visitados, [])
-        for c in caminos:
-            print("{} ---> {}".format(c.getOrigen(), c.getDestino()))
-
-
-    def obtenerCaminos(self, origen, listaAdyacencias, visitados, caminosFinal):
-        if self.visitadosTodos(visitados):
-            return caminosFinal
-        vertice = self.obtenerVertice(origen, self.listaVertices)
-        visitados[self.listaVertices.index(vertice)] = True
-        aristaActual = Arista("X", "X", float("inf"))
-
-        for i in range (len(vertice.getListaAdyacentes())):#Obtine las adyacencias del vertice
-            listaAdyacencias.append(vertice.getListaAdyacentes()[i])
-
-        for v in self.listaVertices:
-            if visitados[self.listaVertices.index(v)]:
-                nuevolistaAdyacencias = []
-                for l in listaAdyacencias:
-                    if l.getDestino() != v.getDato():
-                        nuevolistaAdyacencias.append(l)
-                listaAdyacencias = nuevolistaAdyacencias
-
-        for arista in listaAdyacencias:#obtener arista de menor peso
-            if arista < aristaActual.getPeso():
-                aristaActual = arista
-        caminosFinal.append(aristaActual)
-        return self.obtenerVertice(aristaActual.getDestino(),listaAdyacencias, visitados, caminosFinal)
-
-
-    def visitadosTodos(self, visitados):
-        for i in visitados:
-            if not i:
-                return False
-        return True
-
-
-        caminos = self.caminosOrdenados(origen,[])
-
+    #     self.ordenarMinMax(entorno, entorno + 1)
+    #     return self.minMaxAristas(entorno + 1)
+    #
+    # def ordenarMinMax(self, entorno, iter):
+    #     if iter == (len(self.listaAristas)):
+    #         return
+    #     if self.listaAristas[entorno].getPeso() > self.listaAristas[iter].getPeso():
+    #         aux = self.listaAristas[entorno]
+    #         self.listaAristas[entorno] = self.listaAristas[iter]
+    #         self.listaAristas[iter] = aux
+    #     return self.ordenarMinMax(entorno, iter + 1)
+    #
+    # # 1.1)largest to smallest edges
+    # def maxMinAristas(self, entorno):
+    #     if entorno == (len(self.listaAristas)):
+    #         return
+    #     self.ordenarMaxMin(entorno, entorno + 1)
+    #     return self.maxMinAristas(entorno + 1)
+    #
+    # def ordenarMaxMin(self, entorno, iter):
+    #     if iter == (len(self.listaAristas)):
+    #         return
+    #     if self.listaAristas[entorno].getPeso() < self.listaAristas[iter].getPeso():
+    #         aux = self.listaAristas[entorno]
+    #         self.listaAristas[entorno] = self.listaAristas[iter]
+    #         self.listaAristas[iter] = aux
+    #     return self.ordenarMaxMin(entorno, iter + 1)
+    #
+    #
+    # # 2)degree of the vertices
+    # # def gradoVertices(self, entorno):
+    # #     if entorno == (len(self.listaVertices)):
+    # #         return True
+    # #     self.gradoVertice(self.listaVertices[entorno], 0, 0)
+    # #     return self.gradoVertices01(entorno+1)
+    # #
+    # # def gradoVertice(self, vertice, entorno, gradoVertice):
+    # #     if entorno == (len(self.listaAristas)):
+    # #         print("El grado del vertice {} es {}".format(vertice.getDato(), gradoVertice))
+    # #         return
+    # #     if vertice.getDato() == self.listaAristas[entorno].getOrigen() or vertice.getDato() == self.listaAristas[entorno].getDestino():
+    # #         gradoVertice += 1
+    # #     self.gradoVertice(vertice, entorno+1, gradoVertice)
+    #
+    # def gradoVertices(self, entorno, listaGrados):
+    #     if entorno == 0:
+    #         for i in range(len(self.listaVertices)):
+    #             listaGrados.append(0)
+    #     if entorno == (len(self.listaAristas)):
+    #         return listaGrados
+    #     for i in range(len(self.listaVertices)):
+    #         if self.listaVertices[i].getDato() == self.listaAristas[entorno].getOrigen() or self.listaVertices[i].getDato() == self.listaAristas[entorno].getDestino():
+    #             listaGrados[i] += 1
+    #     return self.gradoVertices(entorno+1,listaGrados)
+    #
+    # def mostrarGradoVertices(self):
+    #     print("                                 GRADOS DE LOS VERTICES")
+    #     listaGrados = self.gradoVertices(0,[])
+    #     for i in range(len(self.listaVertices)):
+    #         print("{} Grado({})".format(self.listaVertices[i].getDato(), listaGrados[i]))
+    #
+    # # 3)vertex highest degree
+    # def verticeMayorGrado(self):
+    #     listaGrados = self.gradoVertices(0,[])
+    #     vertice = [0,0]
+    #     for i in range(len(self.listaVertices)):
+    #         if listaGrados[i] > vertice[1]:
+    #             vertice[0] = i
+    #             vertice[1] = listaGrados[i]
+    #     print("{} con grado de {} es el vertice con mayor grado".format(self.listaVertices[vertice[0]].getDato(),vertice[1]))
+    #
+    # # 4)average adjacencies list
+    # def promedioListaAdyacencias(self):
+    #     adyacencias = 0
+    #     for i in range(len(self.listaVertices)):
+    #         adyacencias += len(self.listaVertices[i].getListaAdyacentes())
+    #     adyacencias = adyacencias/len(self.listaVertices)
+    #     print("El promedio de la lista de adyacencias es: ",adyacencias)
+    #
+    # # 5)Show the wells
+    # def pozos(self,entorno,listaPozos):
+    #     if entorno == 0:
+    #         for i in range(len(self.listaVertices)):
+    #             listaPozos.append(True)
+    #     if entorno == (len(self.listaAristas)):
+    #         return listaPozos
+    #     for i in range(len(self.listaVertices)):
+    #         if self.listaVertices[i].getDato() == self.listaAristas[entorno].getOrigen():
+    #             listaPozos[i] = False
+    #     return self.pozos(entorno+1, listaPozos)
+    #
+    # def mostrarPozos(self):
+    #     print("                                    POZOS")
+    #     listaPozos = self.pozos(0,[])
+    #     for i in range(len(self.listaVertices)):
+    #         if listaPozos[i]:
+    #             print(self.listaVertices[i].getDato())
+    #
+    # # 6)Show the sources
+    # def fuentes(self,entorno,listaFuentes):
+    #     if entorno == 0:
+    #         for i in range(len(self.listaVertices)):
+    #             listaFuentes.append(True)
+    #     if entorno == (len(self.listaAristas)):
+    #         return listaFuentes
+    #     for i in range(len(self.listaVertices)):
+    #         if self.listaVertices[i].getDato() == self.listaAristas[entorno].getDestino():
+    #             listaFuentes[i] = False
+    #     return self.fuentes(entorno+1, listaFuentes)
+    #
+    # def mostrarFuentes(self):
+    #     print("                                   FUENTES")
+    #     listaFuentes = self.fuentes(0,[])
+    #     for i in range(len(self.listaVertices)):
+    #         if listaFuentes[i]:
+    #             print(self.listaVertices[i].getDato())
+    #
+    # # 7)average edge weight
+    # def promedioPesoAristas(self):
+    #     promedio = 0
+    #     for i in range(len(self.listaAristas)):
+    #         promedio += self.listaAristas[i].getPeso()
+    #     promedio = promedio / len(self.listaAristas)
+    #     print("El promedio del peso de las aristas es: ",promedio)
+    #
+    # # 8)top artist
+    # def aristaMayorPeso(self):
+    #     aristaMayor= [Arista(0,0,0)]
+    #     for i in range(len(self.listaAristas)):
+    #         if aristaMayor[len(aristaMayor)-1].getPeso() < self.listaAristas[i].getPeso():
+    #            aristaMayor = [self.listaAristas[i]]
+    #         elif aristaMayor[len(aristaMayor)-1].getPeso() == self.listaAristas[i].getPeso():
+    #             aristaMayor.append(self.listaAristas[i])
+    #
+    #     if len(aristaMayor) == 1:
+    #         print("Arista mayor peso: {}--> {} peso {}".format(aristaMayor[0].getOrigen(), aristaMayor[0].getDestino(), aristaMayor[0].getPeso()))
+    #
+    #     else:
+    #         print("Las aristas de mayor peso son:")
+    #         for i in range(len(aristaMayor)):
+    #             print ("{}--> {} peso {}".format(aristaMayor[i].getOrigen(), aristaMayor[i].getDestino() , aristaMayor[i].getPeso()))
+    #
+    # # 9)
+    # def aristaMenorPeso(self):
+    #     aristaMenor= [Arista(0,0,sys.maxsize)]
+    #     for i in range(len(self.listaAristas)):
+    #         if aristaMenor[len(aristaMenor)-1].getPeso() > self.listaAristas[i].getPeso():
+    #            aristaMenor = [self.listaAristas[i]]
+    #         elif aristaMenor[len(aristaMenor)-1].getPeso() == self.listaAristas[i].getPeso():
+    #             aristaMenor.append(self.listaAristas[i])
+    #
+    #     if len(aristaMenor) == 1:
+    #         print("Arista menor peso: {}--> {} peso {}".format(aristaMenor[0].getOrigen(), aristaMenor[0].getDestino(), aristaMenor[0].getPeso()))
+    #
+    #     else:
+    #         print("Las aristas de menor peso son:")
+    #         for i in range(len(aristaMenor)):
+    #             print ("{}--> {} peso {}".format(aristaMenor[i].getOrigen(), aristaMenor[i].getDestino() , aristaMenor[i].getPeso()))
+    #
+    # # 10)
+    # def verticeAdyacente(self):
+    #     print("Ahora")
+    #
+    # # 11)
+    # def listaAdyacencias(self):
+    #     lista=[]
+    #     for i in range(len(self.listaVertices)):
+    #         for j in range(len(self.listaVertices[i].getListaAdyacentes())):
+    #             lista.append(self.listaVertices[i].getListaAdyacentes()[j])
+    #     return lista
+    #
+    # def mostrarListaAdyacentes(self):
+    #     print("                                  LISTA ADYACENTES")
+    #     lista = self.listaAdyacencias()
+    #     for i in range(len(lista)):
+    #         print(lista[i])
+    # # a)
+    # def verticesNoContemplados(self, entorno, listaVertices, listaAdyacencias):
+    #     if entorno == 0:
+    #         listaAdyacencias = self.listaAdyacencias()
+    #         for i in range(len(self.listaVertices)):
+    #             listaVertices.append(True)
+    #     if entorno == (len(self.listaVertices)):
+    #         return listaVertices
+    #     for i in range(len(listaAdyacencias)):
+    #         if self.listaVertices[entorno].getDato() == listaAdyacencias[i]:
+    #             listaVertices[entorno] = False
+    #     return self.verticesNoContemplados(entorno+1, listaVertices, listaAdyacencias)
+    #
+    # def mostrarVerticesNoContemplados(self):
+    #     print("                                  VERTICES NO CONTEMPLADOS")
+    #     listaVertices =self.verticesNoContemplados(0, [], [])
+    #     for i in range(len(listaVertices)):
+    #         if listaVertices[i]:
+    #             print(self.listaVertices[i].getDato())
+    #
+    # # b)
+    # def adyacenciaMasComun(self, entorno, listaVertices, listaAdyacencias):
+    #     if entorno == 0:
+    #         listaAdyacencias = self.listaAdyacencias()
+    #         for i in range(len(self.listaVertices)):
+    #             listaVertices.append(0)
+    #     if entorno == (len(self.listaVertices)):
+    #         return listaVertices
+    #     for i in range(len(listaAdyacencias)):
+    #         if self.listaVertices[entorno].getDato() == listaAdyacencias[i]:
+    #             listaVertices[entorno] += 1
+    #     return self.adyacenciaMasComun(entorno+1, listaVertices, listaAdyacencias)
+    #
+    # def mostarAdyacenciaMasComun(self):
+    #     listaVertices = self.adyacenciaMasComun(0, [], [])
+    #     comun = 0
+    #     for i in range(len(listaVertices)):
+    #         if listaVertices[i] > comun:
+    #             comun = i
+    #     print("La adyacencia mas comun es {} con {} ".format(self.listaVertices[comun].getDato(), listaVertices[comun]))
+    #
+    #
+    #
+    # def prim(self,origen):
+    #     visitados = []
+    #     for i in self.listaVertices:
+    #         visitados.append(False)
+    #     caminos= self.obtenerCaminos(origen,[], visitados, [])
+    #     for c in caminos:
+    #         print("{} ---> {}".format(c.getOrigen(), c.getDestino()))
+    #
+    #
+    # def obtenerCaminos(self, origen, listaAdyacencias, visitados, caminosFinal):
+    #     if self.visitadosTodos(visitados):
+    #         return caminosFinal
+    #     vertice = self.obtenerVertice(origen, self.listaVertices)
+    #     visitados[self.listaVertices.index(vertice)] = True
+    #     aristaActual = Arista("X", "X", float("inf"))
+    #
+    #     for i in range (len(vertice.getListaAdyacentes())):#Obtine las adyacencias del vertice
+    #         listaAdyacencias.append(vertice.getListaAdyacentes()[i])
+    #
+    #     for v in self.listaVertices:
+    #         if visitados[self.listaVertices.index(v)]:
+    #             nuevolistaAdyacencias = []
+    #             for l in listaAdyacencias:
+    #                 if l.getDestino() != v.getDato():
+    #                     nuevolistaAdyacencias.append(l)
+    #             listaAdyacencias = nuevolistaAdyacencias
+    #
+    #     for arista in listaAdyacencias:#obtener arista de menor peso
+    #         if arista < aristaActual.getPeso():
+    #             aristaActual = arista
+    #     caminosFinal.append(aristaActual)
+    #     return self.obtenerVertice(aristaActual.getDestino(),listaAdyacencias, visitados, caminosFinal)
+    #
+    #
+    # def visitadosTodos(self, visitados):
+    #     for i in visitados:
+    #         if not i:
+    #             return False
+    #     return True
+    #
+    #
+    #     caminos = self.caminosOrdenados(origen,[])
+    #
 
 
     #Algorithms
