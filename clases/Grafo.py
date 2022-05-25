@@ -16,7 +16,7 @@ class Grafo:
         self.listaVertices = []
         self.listaAristas = []
         self.profundidad = []
-
+        self.amplitud = []
     """————————————————————————————————————————————GETS | SETS————————————————————————————————————————————————————"""
 
     # Set - Get | lista de vertices
@@ -39,6 +39,14 @@ class Grafo:
 
     def setProfundidad(self, profundidad):
         self.profundidad = profundidad
+
+    # Set - Get | recorrido profundidad
+    def getAmplitud(self):
+        return self.amplitud
+
+    def setAmplitud(self,amplitud):
+        self.amplitud = amplitud
+
 
 
     """—————————————————————————————————————————FUNCIONES VERTICE————————————————————————————————————————————————"""
@@ -161,6 +169,26 @@ class Grafo:
             self.profundidad.append(vertice.getNombre())
             for dato in vertice.getListaAdyacentes():
                 self.recorridoProfundidad(dato)
+
+    def recorridoAmplitud(self, nombre):
+        visitados = []
+        cola =  []
+        cola.append(nombre)
+        for i in self.listaVertices:
+            visitados.append(False)
+        self.ra(cola, visitados)
+
+
+    def ra(self, cola, visitados):
+        if len(cola) == 0:
+            return
+        vertice = self.obtenerVertice(cola.pop(0), self.listaVertices)
+        self.amplitud.append(vertice.getNombre())
+        visitados[self.listaVertices.index(vertice)] = True
+        for a in vertice.getListaAdyacentes():
+            if not (a in cola) and not (visitados[self.listaVertices.index(self.obtenerVertice(a, self.listaVertices))]):
+                cola.append(a)
+        self.ra(cola, visitados)
 
     # dijkstra
     def caminoMasCorto(self, origen, destino):

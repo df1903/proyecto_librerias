@@ -23,6 +23,17 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
     for r in rutasData:
         aux = Arista(**r)
         grafo.ingresarArista(aux.getOrigen(), aux.getDestino(), aux.getPeso())
+grafo.recorridoAmplitud("Libreria Euler")
+for i in grafo.getAmplitud():
+    print(i)
+
+print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+print("Funcionara pongamoslo a prueba")
+print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+
+grafo.recorridoProfundidad("Libreria Euler")
+for i in grafo.getProfundidad():
+    print(i)
 
 # for i in grafo.getListaVertices():
 #     print(i.getNombre(), "Ad", i.getListaAdyacentes())
@@ -31,12 +42,6 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
 # grafo.mostrarVertices()
 # grafo.mostrarAristas()
 # grafo.caminoMasCorto('Libreria Euler','Libreria Celsius')
-
-# grafo.recorridoProfundidad("Libreria Euler")
-# for i in grafo.getProfundidad():
-#     print(i)
-
-
 
 # grafo.ingresarVertice("a", 10)
 # grafo.ingresarVertice("b", 10)
