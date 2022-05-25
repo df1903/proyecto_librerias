@@ -31,8 +31,10 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
 # grafo.mostrarVertices()
 # grafo.mostrarAristas()
 # grafo.caminoMasCorto('Libreria Euler','Libreria Celsius')
-grafo.recorridoProfundidad("Libreria Euler")
 
+# grafo.recorridoProfundidad("Libreria Euler")
+# for i in grafo.getProfundidad():
+#     print(i)
 
 
 

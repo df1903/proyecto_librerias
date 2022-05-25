@@ -15,6 +15,7 @@ class Grafo:
     def __init__(self):
         self.listaVertices = []
         self.listaAristas = []
+        self.profundidad = []
 
     """————————————————————————————————————————————GETS | SETS————————————————————————————————————————————————————"""
 
@@ -31,6 +32,14 @@ class Grafo:
 
     def setListaAristas(self, listaAristas):
         self.listaAristas = listaAristas
+
+    # Set - Get | recorrido profundidad
+    def getProfundidad(self):
+        return self.profundidad
+
+    def setProfundidad(self, profundidad):
+        self.profundidad = profundidad
+
 
     """—————————————————————————————————————————FUNCIONES VERTICE————————————————————————————————————————————————"""
 
@@ -124,35 +133,34 @@ class Grafo:
                 vertice.getListaAdyacentes().pop(vertice.getListaAdyacentes().index(arista.getDestino()))
         self.nodirigido()
 
-    def recorridoProfundidad(self,dato):
-        self.dirigido()
-        visitados = []
-        pila = []
-        pila.append(dato)
-        for i in self.listaVertices:
-            visitados.append(False)
-        oe = self.profundidad(visitados, pila, [],0)
-        for j in oe:
-            print(j.getNombre())
-        self.nodirigido()
-
-    def profundidad(self, visitados, pila, recorrido,num):
-        print(num)
-        print(len(pila))
-        if len(pila) == 0:
-            return recorrido
-        i = self.listaVertices.index(self.obtenerVertice(pila.pop(), self.listaVertices))
-        vertice = self.listaVertices[i]
-        for l in vertice.getListaAdyacentes():
-                pila.append(l)
-        if not visitados[i]:
-            recorrido.append(vertice)
-            visitados[i] = True
-        return self.profundidad(visitados, pila, recorrido, num+1)
+    # def recorridoProfundidad(self,dato):
+    #     visitados = []
+    #     pila = []
+    #     pila.append(dato)
+    #     for v in self.listaVertices:
+    #         visitados.append(False)
+    #     self.profundidad(visitados, pila, [])
+    #
+    # def profundidad(self, visitados, pila, recorrido):
+    #     if len(pila) == 0:
+    #         return recorrido
+    #     indice = self.listaVertices.index(pila.pop())
+    #     visitados[indice] = True
+    #     vertice = self.listaVertices[indice]
+    #     recorrido.append(self.listaVertices[indice])
+    #     for a in vertice.listaAdyacentes:
+    #         if not visitados[self.listaVertices.index(self.obtenerVertice(a, self.listaVertices))]:
+    #             pila.append(a)
 
 
-
-
+    def recorridoProfundidad(self, nombre):
+        if nombre in self.profundidad:
+            return
+        vertice = self.obtenerVertice(nombre, self.listaVertices)
+        if vertice != None:
+            self.profundidad.append(vertice.getNombre())
+            for dato in vertice.getListaAdyacentes():
+                self.recorridoProfundidad(dato)
 
     # dijkstra
     def caminoMasCorto(self, origen, destino):
