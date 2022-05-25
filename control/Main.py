@@ -23,17 +23,58 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
     for r in rutasData:
         aux = Arista(**r)
         grafo.ingresarArista(aux.getOrigen(), aux.getDestino(), aux.getPeso())
-grafo.recorridoAmplitud("Libreria Euler")
-for i in grafo.getAmplitud():
-    print(i)
 
-print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
-print("Funcionara pongamoslo a prueba")
-print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+# prim = grafo.prim()
+# for i in prim:
+#     print(i.getOrigen(),"==>", i.getDestino(),"==", i.getPeso())
+# a = [0,1,2,3,4,5,6]
+# for i in range(len(a)):
+#     print(i)
 
-grafo.recorridoProfundidad("Libreria Euler")
-for i in grafo.getProfundidad():
-    print(i)
+
+
+
+
+
+
+
+
+
+
+# Libreria Gadner ==> Libreria Voronoi == 170
+# Libreria Voronoi ==> Casita == 190
+# Casita ==> Libreria Gauss == 180
+# Casita ==> Libreria Fahrenheit == 180
+# Libreria Gauss ==> Libreria Richter == 198
+# Libreria Richter ==> Libreria Konisberg == 225
+# Libreria Gauss ==> Libreria Euler == 230
+# Libreria Fahrenheit ==> Libreria Hilbert == 230
+# Libreria Hilbert ==> Libreria Fibonacci == 250
+# Libreria Fahrenheit ==> Libreria Celsius == 255
+
+
+
+
+
+
+
+
+
+
+
+
+
+# grafo.recorridoAmplitud("Libreria Euler")
+# for i in grafo.getAmplitud():
+#     print(i)
+#
+# print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+# print("Funcionara pongamoslo a prueba")
+# print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+#
+# grafo.recorridoProfundidad("Libreria Euler")
+# for i in grafo.getProfundidad():
+#     print(i)
 
 # for i in grafo.getListaVertices():
 #     print(i.getNombre(), "Ad", i.getListaAdyacentes())
@@ -48,11 +89,12 @@ for i in grafo.getProfundidad():
 # grafo.ingresarVertice("c", 10)
 # grafo.ingresarVertice("d", 10)
 # grafo.ingresarVertice("e", 10)
-#
-#
-# grafo.ingresarArista("a", "b", 1)
+# #
+# grafo.ingresarArista("a", "c", 3)
+
+# grafo.ingresarArista("a", "b", 4)
 # grafo.ingresarArista("b", "a", 1)
-# grafo.ingresarArista("b", "c", 2)
+# grafo.ingresarArista("b", "c", 4)
 # grafo.ingresarArista("c", "b", 2)
 # grafo.ingresarArista("c", "d", 3)
 # grafo.ingresarArista("d", "c", 3)
@@ -61,6 +103,10 @@ for i in grafo.getProfundidad():
 # grafo.ingresarArista("e", "a", 5)
 # grafo.ingresarArista("a", "e", 5)
 
+
+# prim = grafo.prim()
+# for i in prim:
+#     print(i.getOrigen(),"==>", i.getDestino(),"==", i.getPeso())
 # grafo.caminoMasCorto("a","d")
 # for i in grafo.getListaVertices():
 #     print(i.getNombre(), "Ad", i.getListaAdyacentes())
