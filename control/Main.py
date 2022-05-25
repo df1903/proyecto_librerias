@@ -24,9 +24,9 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
         aux = Arista(**r)
         grafo.ingresarArista(aux.getOrigen(), aux.getDestino(), aux.getPeso())
 
-# prim = grafo.prim()
-# for i in prim:
-#     print(i.getOrigen(),"==>", i.getDestino(),"==", i.getPeso())
+prim = grafo.kruskal()
+for i in prim:
+    print(i.getOrigen(),"==>", i.getDestino(),"==", i.getPeso())
 # a = [0,1,2,3,4,5,6]
 # for i in range(len(a)):
 #     print(i)

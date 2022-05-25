@@ -178,6 +178,29 @@ class Grafo:
                 cola.append(a)
         self.ra(cola, visitados)
 
+    # algoritmo de kruskal
+    def kruskal(self):
+        aristas = copy(self.listaAristas)
+        visitados = []  # para vetices visitados
+
+        for v in self.listaVertices:# inicializar con el tamaño de los vertice con false
+            visitados.append(False)
+        return self.ordenarKruskal(visitados, aristas, [])
+
+    def ordenarKruskal(self, visitados, aristas, recorrido):
+        if len(recorrido) == len(self.listaVertices)-1:# retornar cuando el arbol de expacion minima este formado
+            return recorrido
+        for vis in aristas:  # eliminar aristas que formen ciclos
+            if visitados[self.listaVertices.index(self.obtenerVertice(vis.getDestino(), self.listaVertices))] == True:
+                aristas.pop(aristas.index(vis))
+        menor = aristas[0]
+        for a in aristas:  # obtener arista de menor peso
+            if a.getPeso() < menor.getPeso():
+                menor = a
+        recorrido.append(aristas.pop(aristas.index(menor)))
+        return self.ordenarKruskal(visitados, aristas, recorrido)
+
+
     # algoritmo de prim
     def prim(self):
         # inicializar listas
@@ -227,8 +250,8 @@ class Grafo:
         for a in aristas:#obtener arista de menor peso
             if a.getPeso() < menor.getPeso():
                 menor = a
-
         menor = aristas.pop(aristas.index(menor))
+
         destino = self.obtenerVertice(menor.getDestino(), self.listaVertices)
         visitados[self.listaVertices.index(destino)] = True
         recorrido.append(menor)
