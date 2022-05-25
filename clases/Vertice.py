@@ -14,7 +14,6 @@ class Vertice:
     # constructor json
     def fromjson(cls, json_string):
         json_dict = json_string.loads(json_string)
-        # x = Vertice(json_dict.nombre, json_dict.libros, json_dict.listaAdyacentes )
         return Vertice(**json_dict)
 
     # Set - Get | nombre
