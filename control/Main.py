@@ -24,10 +24,17 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
         aux = Arista(**r)
         grafo.ingresarArista(aux.getOrigen(), aux.getDestino(), aux.getPeso())
 
-prim = grafo.kruskal()
+
+
+
+prim = grafo.boruvka()
 for i in prim:
-    print(i.getOrigen(),"==>", i.getDestino(),"==", i.getPeso())
-# a = [0,1,2,3,4,5,6]
+    for j in i:
+        print(j.getOrigen(),"-->", j.getDestino(), "==", j.getPeso())
+    print("xddxxd")
+#     print("Funciono")
+# a = [0]
+# print(len(a))
 # for i in range(len(a)):
 #     print(i)
 

@@ -145,7 +145,7 @@ class Grafo:
                 lista.pop(lista.index(arista))
                 vertice = self.obtenerVertice(arista.getOrigen(), self.listaVertices)
                 vertice.getListaAdyacentes().pop(vertice.getListaAdyacentes().index(arista.getDestino()))
-        self.nodirigido()
+        self.listaAristas = lista
 
     # recorrido en profundidad
     def recorridoProfundidad(self, nombre):
@@ -165,7 +165,6 @@ class Grafo:
         for i in self.listaVertices:
             visitados.append(False)
         self.ra(cola, visitados)
-
 
     def ra(self, cola, visitados):
         if len(cola) == 0:
@@ -260,6 +259,137 @@ class Grafo:
             if visitados[self.listaVertices.index(self.obtenerVertice(ad, self.listaVertices))] == False:
                 aristas.append(self.obtenerArista(menor.getDestino(), ad, self.listaAristas))
         return self.ordenarPrim(visitados, aristas, recorrido)
+
+    # boruvka
+
+    def boruvka(self):
+
+        # listaAdyacencias = []# crear la lista de adyacencias
+
+        # crear los 3 conjuntos
+        listaVertices = []# lista para conjuntos de vertices
+        listaAristas = []# lista para conjuntos de aristas de todos los vertices
+        conjuntos = []# lista para conjuntos definitivos
+
+        # inicializar conjuntos
+        for vertice in self.listaVertices:
+            listaVertices.append([])
+            listaVertices[len(listaVertices) - 1].append(vertice.getNombre())
+            conjuntos.append([])
+            # listaAdyacencias.append([])
+            listaAristas.append([])
+            for adyacencia in vertice.getListaAdyacentes():
+                # listaAdyacencias[len(listaAdyacencias)-1].append(adyacencia)
+                listaAristas[len(listaAristas) - 1].append(self.obtenerArista(vertice.getNombre(), adyacencia, self.listaAristas))
+
+        return self.ordenarBoruvka(listaVertices, listaAristas, conjuntos)
+
+    def ordenarBoruvka(self, listaVertices, listaAristas, conjuntos):
+        if len(conjuntos) == 1:
+            return conjuntos
+        for indice in range(len(listaVertices)):# encontrar la menor arista de un conjunto de vertice
+            menor = listaAristas[indice][0]
+            for i in listaVertices[indice]:
+                for arista in listaAristas[indice]:
+                    if menor.getPeso() > arista.getPeso():
+                        menor = arista
+            conjuntos[indice].append(listaAristas[indice].pop(listaAristas[indice].index(menor)))
+
+        # for indice in range(len(listaVertices)):# verfico las otras listas por el tamaño de la lista de el conjunto de vertices
+        #     for vertice in listaVertices[indice]:# obtengo un vertice de cada lista de vertices
+        #         # for i in range(len(conjuntos)- indice):# obtengo el indice paraa obtener un conjunto
+        #         i = 1
+        #         while indice + i  < len(conjuntos):
+        #             enlace = False
+        #             for arista in conjuntos[i + indice]:# obtengo las aristas de un conjunto
+        #                 if vertice == arista.getDestino():
+        #                     enlace = True
+        #                     break
+        #             if enlace:
+        #                 for arista in conjuntos[i + indice]:
+        #                     conjuntos[indice].append(arista)
+        #                 conjuntos.pop(1 + indice)
+        #             i +=1
+        indice = 0
+        while indice < len(conjuntos):
+            for vertice in listaVertices[indice]:# obtengo un vertice de cada lista de vertices
+                # for i in range(len(conjuntos)- indice):# obtengo el indice paraa obtener un conjunto
+                i = 1
+                while indice + i  < len(conjuntos):
+                    enlace = False
+                    for arista in conjuntos[i + indice]:# obtengo las aristas de un conjunto
+                        if vertice == arista.getDestino():
+                            enlace = True
+                            break
+                    if enlace:
+                        for arista in conjuntos[i + indice]:
+                            conjuntos[indice].append(arista)
+                        conjuntos.pop(1 + indice)
+                        for v in listaVertices[i + indice]:
+                            listaVertices[indice].append(v)
+                        listaVertices.pop(1 + indice)
+                        for a in listaAristas[i + indice]:
+                            listaAristas[indice].append(a)
+                        listaAristas.pop(1 + indice)
+
+                    i +=1
+            indice += 1
+
+        for lista in listaAristas:
+            i = 0
+            while i < len(lista):
+                j = 0
+                while j < len(lista):
+                    if lista[i].getOrigen() == lista[j].getDestino() and lista[i].getDestino() == lista[j].getOrigen():
+                        lista.pop(j)
+                    j += 1
+                i += 1
+
+        for lista in conjuntos:
+            i = 0
+            while i < len(lista):
+                j = 0
+                while j < len(lista):
+                    if lista[i].getOrigen() == lista[j].getDestino() and lista[i].getDestino() == lista[j].getOrigen():
+                        lista.pop(j)
+                    j += 1
+                i += 1
+
+
+
+
+
+        print(len(listaAristas))
+        print(len(listaVertices))
+        print(len(conjuntos))
+        return self.ordenarBoruvka(listaVertices, listaAristas, conjuntos)
+
+
+
+
+
+    #
+    #     aristasBoruvka = []
+    #     listaConjuntos = []
+    #     bandera = True
+    #     cantidad = 0
+    #     while(cantidad >1 or bandera):
+    #         for vertice in copiaVertices:
+    #             self.operacinesCunjuntosB(listaConjuntos, aristasBoruvka, copiaAristas)
+    #         bandera = False
+    #         cantidad = self.cantidadConjuntos(listaConjuntos)
+    #     return aristasBoruvka
+    #
+    # def cantidadConjuntos(self,listaConjuntos):
+    #     cantida = 0
+    #     for conjunto in listaConjuntos:
+    #         if len(conjunto) > 0:
+    #             cantidad = cantidad + 1
+    #     return cantidad
+    #
+    # operacinesCunjuntosB(listaConjuntos, aristasBoruvka, copiaAristas)
+
+
 
     # dijkstra
     def dijkstra(self, origen, destino):
