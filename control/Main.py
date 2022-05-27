@@ -30,13 +30,3 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
 
 
 
-a= grafo.dijkstra("Libreria Konisberg", "Libreria Celsius")
-
-for i in a :
-    print(i.getOrigen(), i.getDestino(), i.getPeso())
-
-
-a= grafo.dijkstraBlock("Libreria Konisberg", "Libreria Celsius")
-for i in a :
-    print(i.getOrigen(), i.getDestino(), i.getPeso())
-
