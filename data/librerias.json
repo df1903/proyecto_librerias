@@ -1,46 +1,35 @@
 [
   {
-    "nombre": "Libreria Euler",
-    "libros": 100
+    "nombre": "Libreria Euler"
   },
   {
-    "nombre": "Libreria Gadner",
-    "libros": 100
+    "nombre": "Libreria Gadner"
   },
   {
-    "nombre": "Libreria Voronoi",
-    "libros": 100
+    "nombre": "Libreria Voronoi"
   },
   {
-    "nombre": "Libreria Gauss",
-    "libros": 100
+    "nombre": "Libreria Gauss"
   },
   {
-    "nombre": "Libreria Konisberg",
-    "libros": 100
+    "nombre": "Libreria Konisberg"
   },
   {
-    "nombre": "Casita",
-    "libros": 100
+    "nombre": "Casita"
   },
   {
-    "nombre": "Libreria Richter",
-    "libros": 100
+    "nombre": "Libreria Richter"
   },
   {
-    "nombre": "Libreria Fibonacci",
-    "libros": 100
+    "nombre": "Libreria Fibonacci"
   },
   {
-    "nombre": "Libreria Fahrenheit",
-    "libros": 100
+    "nombre": "Libreria Fahrenheit"
   },
   {
-    "nombre": "Libreria Hilbert",
-    "libros": 100
+    "nombre": "Libreria Hilbert"
   },
   {
-    "nombre": "Libreria Celsius",
-    "libros": 100
+    "nombre": "Libreria Celsius"
   }
 ]
