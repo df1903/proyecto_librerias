@@ -444,59 +444,59 @@ class Grafo:
             aux = verticesAux[indice]
         verticesD.insert(0, aux)
 
-    # # dijkstraBlock
-    # def dijkstraBlock(self, origen, destino):
-    #     self.setCaminoBloqueado(self.dijkstra(origen, destino))
-    #     verticesAux = []
-    #     verticesD = []
-    #     caminos = self.ordenarDijkstraBlock(origen, verticesAux)
-    #     cont = 0
-    #     self.rutas(verticesD, verticesAux, destino, origen)
-    #     aristas = []
-    #     for i in range(len(verticesD) - 1):
-    #         aristas.append(self.obtenerArista(verticesD[i], verticesD[i + 1], self.listaAristas))
-    #     return aristas
-    #
-    # def ordenarDijkstraBlock(self, origen, verticesAux):
-    #     visitados = []  # lista de visitados
-    #     caminos = []  # recorrido final
-    #
-    #     for v in self.listaVertices:  # iniciar los valores en infinito
-    #         caminos.append(float("inf"))
-    #         visitados.append(False)
-    #         verticesAux.append(None)
-    #         if v.getNombre() == origen:
-    #             caminos[self.listaVertices.index(v)] = 0
-    #             verticesAux[self.listaVertices.index(v)] = v.getNombre()
-    #
-    #     while not self.todosVisitados(visitados):
-    #         menorAux = self.menorNoVisitado(caminos, visitados)  # obtiene el menor no visitado
-    #         if menorAux == None:
-    #             break
-    #         indice = self.listaVertices.index(menorAux)  # indice del menor no marcado
-    #         visitados[indice] = True
-    #         valorActual = caminos[indice]
-    #
-    #         for adyacencia in menorAux.getListaAdyacentes():
-    #             if self.viaBloqueada(self.obtenerArista(menorAux.getNombre(), adyacencia, self.listaAristas)):
-    #                 indiceNuevo = self.listaVertices.index(self.obtenerVertice(adyacencia, self.listaVertices))
-    #                 arista = self.verificarAristaBlock(menorAux.getNombre(), adyacencia)
-    #                 if caminos[indiceNuevo] > valorActual + arista.getPeso():
-    #                     caminos[indiceNuevo] = valorActual + arista.getPeso()
-    #                     verticesAux[indiceNuevo] = self.listaVertices[indice].getNombre()
-    #
-    #     return caminos
-    #
-    # def verificarAristaBlock(self, origen, destino):
-    #     for i in range(len(self.listaAristas)):
-    #         if self.viaBloqueada(self.listaAristas[i]):
-    #             if origen == self.listaAristas[i].getOrigen() and destino == self.listaAristas[i].getDestino():
-    #                 return self.listaAristas[i]
-    #
-    #     return None
-    #
-    # def viaBloqueada(self, arista):
-    #     for i in self.caminoBloqueado:
-    #         arista == i
-    #         return False
-    #     return True
+    # dijkstraBlock
+    def dijkstraBlock(self, origen, destino):
+        self.setCaminoBloqueado(self.dijkstra(origen, destino))
+        verticesAux = []
+        verticesD = []
+        caminos = self.ordenarDijkstraBlock(origen, verticesAux)
+        cont = 0
+        self.rutas(verticesD, verticesAux, destino, origen)
+        aristas = []
+        for i in range(len(verticesD) - 1):
+            aristas.append(self.obtenerArista(verticesD[i], verticesD[i + 1], self.listaAristas))
+        return aristas
+
+    def ordenarDijkstraBlock(self, origen, verticesAux):
+        visitados = []  # lista de visitados
+        caminos = []  # recorrido final
+
+        for v in self.listaVertices:  # iniciar los valores en infinito
+            caminos.append(float("inf"))
+            visitados.append(False)
+            verticesAux.append(None)
+            if v.getNombre() == origen:
+                caminos[self.listaVertices.index(v)] = 0
+                verticesAux[self.listaVertices.index(v)] = v.getNombre()
+
+        while not self.todosVisitados(visitados):
+            menorAux = self.menorNoVisitado(caminos, visitados)  # obtiene el menor no visitado
+            if menorAux == None:
+                break
+            indice = self.listaVertices.index(menorAux)  # indice del menor no marcado
+            visitados[indice] = True
+            valorActual = caminos[indice]
+
+            for adyacencia in menorAux.getListaAdyacentes():
+                if self.viaBloqueada(self.obtenerArista(menorAux.getNombre(), adyacencia, self.listaAristas)):
+                    indiceNuevo = self.listaVertices.index(self.obtenerVertice(adyacencia, self.listaVertices))
+                    arista = self.verificarAristaBlock(menorAux.getNombre(), adyacencia)
+                    if caminos[indiceNuevo] > valorActual + arista.getPeso():
+                        caminos[indiceNuevo] = valorActual + arista.getPeso()
+                        verticesAux[indiceNuevo] = self.listaVertices[indice].getNombre()
+
+        return caminos
+
+    def verificarAristaBlock(self, origen, destino):
+        for i in range(len(self.listaAristas)):
+            if self.viaBloqueada(self.listaAristas[i]):
+                if origen == self.listaAristas[i].getOrigen() and destino == self.listaAristas[i].getDestino():
+                    return self.listaAristas[i]
+
+        return None
+
+    def viaBloqueada(self, arista):
+        for i in self.caminoBloqueado:
+            arista == i
+            return False
+        return True
