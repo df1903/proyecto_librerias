@@ -263,9 +263,11 @@ class Grafo:
 
     # boruvka
     def boruvka(self):
-        conjuntoVertices = [] # agrupacion de vertices por sub grafos
+        conjuntoVertices = [] # conjunto con conjunto de vertices
         conjuntoAristas = [] # conjunto solucion
         copiaAristas = copy(self.listaAristas) # conjunto de donde se extraeran aristas
+
+        # inicializacion de listas
         for i in self.listaVertices:
             conjuntoVertices.append([])
             conjuntoAristas.append([])
@@ -280,12 +282,18 @@ class Grafo:
         # for i in copiaAristas:
         #     print(i.getOrigen(),i.getDestino(),i.getPeso())
 
-        self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
+        aristas = self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
+        print("solucion")
+        for j in aristas:
+            for i in j:
+                print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
 
     def ordenarBoruvka(self, conjuntoVertices, copiaAristas, conjuntoAristas):
+        if len(conjuntoVertices) == 1:
+            return conjuntoAristas
         aristasTemp = []
         uniones = []
-
+        print("tamaño copiaAristas", len(copiaAristas))
         # encontrar menor
         for listaVeritices in conjuntoVertices:
             menor = (Arista("x", "x", float("inf")))
@@ -296,11 +304,16 @@ class Grafo:
                             menor = arista
             # aristasTemp.append([])
             # aristasTemp[len(aristasTemp)-1]
+            copiaAristas.pop(copiaAristas.index(menor))
             conjuntoAristas[conjuntoVertices.index(listaVeritices)].append(menor)
             aristasTemp.append(menor)
+            print("menor")
+            print(menor.getOrigen(),"----", menor.getDestino(),"--->", menor.getPeso())
+        print("tamaño copiaAristas", len(copiaAristas))
 
-        for i in aristasTemp:
-            print(i.getOrigen(),"---",i.getDestino(),"---->", i.getPeso())
+        # print("menor")
+        # for i in aristasTemp:
+        #     print(i.getOrigen(),"---",i.getDestino(),"---->", i.getPeso())
 
 
         # verificar uniones
@@ -311,8 +324,9 @@ class Grafo:
                          if vertice.getNombre() == arista.getDestino():
                             uniones.append([conjuntoVertices.index(listaVeritices), aristasTemp.index(arista)])
 
-        for i in uniones:
-            print(i)
+        # print("verificar uniones")
+        # for i in uniones:
+        #     print(i)
 
         repetir = True
         while repetir:
@@ -359,14 +373,50 @@ class Grafo:
                     verticeTemp[len(verticeTemp) - 1].append(x)
                 for y in conjuntoAristas[j]:
                     conjuntoAristasTemp[len(conjuntoAristasTemp) - 1].append(y)
-        for i in verticeTemp:
-            for j in i:
-                print(j.getNombre())
-            print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+
         for i in conjuntoAristasTemp:
             for j in i:
                 print(j.getOrigen(),"---",j.getDestino(),"---->", j.getPeso())
             print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+
+        conjuntoAristas = []
+        # eliminar aristas repetidas
+
+        for i in range(len(conjuntoAristasTemp)):
+            for j in conjuntoAristasTemp[i]:
+                arista = False
+                for x in conjuntoAristasTemp[i]:
+                    if j.getOrigen() == x.getDestino() and j.getDestino() == x.getOrigen():
+                        arista = x
+                        break
+                if arista:
+                    conjuntoAristasTemp[i].pop(conjuntoAristasTemp[i].index(arista))
+        print("tamaño copiaAristas", len(copiaAristas))
+
+        for i in verticeTemp:
+            for j in i:
+                for x in copiaAristas:
+                    if x.getOrigen() == j.getNombre():
+                        for y in i:
+                            if x.getDestino() == y.getNombre():
+                                copiaAristas.pop(copiaAristas.index(x))
+        print("tamaño copiaAristas", len(copiaAristas))
+
+        for i in copiaAristas:
+            print(i.getOrigen(), i.getDestino(), i.getPeso())
+
+        return self.ordenarBoruvka(verticeTemp, copiaAristas, conjuntoAristasTemp)
+
+        # eliminar aristas que formen ciclos
+
+        # for i in verticeTemp:
+        #     for j in i:
+        #         print(j.getNombre())
+        #     print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+        # for i in conjuntoAristas:
+        #     for j in i:
+        #         print(j.getOrigen(),"---",j.getDestino(),"---->", j.getPeso())
+        #     print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
 
         #  for i in uniones:
 
