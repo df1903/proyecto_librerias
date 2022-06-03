@@ -263,86 +263,194 @@ class Grafo:
 
     # boruvka
     def boruvka(self):
-        copiaVertices = copy(self.listaVertices)
-        copiaAristas = copy(self.listaAristas)
-        aristasBoruvka = []
-        listaConjuntos = []
-        bandera = True
-        cantidad = 0
-        while(cantidad > 1 or bandera):
-            for vertice in copiaVertices:
-                self.operacinesCunjuntosB(vertice, listaConjuntos, aristasBoruvka, copiaAristas)
-            bandera = False
-            cantidad = self.cantidadConjuntos(listaConjuntos)
-        return aristasBoruvka
+        conjuntoVertices = [] # agrupacion de vertices por sub grafos
+        conjuntoAristas = [] # conjunto solucion
+        copiaAristas = copy(self.listaAristas) # conjunto de donde se extraeran aristas
+        for i in self.listaVertices:
+            conjuntoVertices.append([])
+            conjuntoAristas.append([])
+            conjuntoVertices[len(conjuntoVertices)-1].append(i)
 
-    def cantidadConjuntos(self,listaConjuntos):
-        cantidad = 0
-        for conjunto in listaConjuntos:
-            if len(conjunto) > 0:
-                cantidad = cantidad + 1
-        return cantidad
+        # for i in conjuntoVertices:
+        #     print(i)
+        #
+        # for i in conjuntoAristas:
+        #     print(i)
+        #
+        # for i in copiaAristas:
+        #     print(i.getOrigen(),i.getDestino(),i.getPeso())
 
-    def ordenar(self, aristas):
-        for i in range(len(aristas)):
-            for j in range(len(aristas)):
-                    if aristas[i].getPeso() < aristas[j].getPeso():
-                        temp = aristas[i]
-                        aristas[i] = aristas [j]
-                        aristas[j] = temp
-    def buscarMenor(self, vertice, copiaAristas):
-        temp = []
-        for adyacencia in vertice.getListaAdyacentes():
-            for arista in copiaAristas:
-                if arista.getOrigen() == vertice.getNombre() and arista.getDestino() == adyacencia:
-                    temp.append(arista)
-        if temp:
-            self.ordenar(temp)
+        self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
 
-            vertice.getListaAdyacentes().remove(temp[0].getDestino())
-            return temp[0]
-        return None
+    def ordenarBoruvka(self, conjuntoVertices, copiaAristas, conjuntoAristas):
+        aristasTemp = []
+        uniones = []
+
+        # encontrar menor
+        for listaVeritices in conjuntoVertices:
+            menor = (Arista("x", "x", float("inf")))
+            for vertice in listaVeritices:
+                for arista in copiaAristas:
+                    if arista.getOrigen() == vertice.getNombre():
+                        if arista.getPeso() < menor.getPeso():
+                            menor = arista
+            # aristasTemp.append([])
+            # aristasTemp[len(aristasTemp)-1]
+            conjuntoAristas[conjuntoVertices.index(listaVeritices)].append(menor)
+            aristasTemp.append(menor)
+
+        for i in aristasTemp:
+            print(i.getOrigen(),"---",i.getDestino(),"---->", i.getPeso())
 
 
-    def operacinesCunjuntosB(self, vertice, listaConjuntos, aristasBoruvka, copiaAristas):
-        encontrado1 = -1
-        encontrado2 = -1
-        menor = self.buscarMenor(vertice, copiaAristas)
+        # verificar uniones
+        for listaVeritices in conjuntoVertices:
+            for vertice in listaVeritices:
+                for arista in aristasTemp:
+                    if aristasTemp.index(arista) != conjuntoVertices.index(listaVeritices):
+                         if vertice.getNombre() == arista.getDestino():
+                            uniones.append([conjuntoVertices.index(listaVeritices), aristasTemp.index(arista)])
 
-        if not menor == None:
-            if not listaConjuntos:
-                listaConjuntos.append({menor.getOrigen(), menor.getDestino()})
-                aristasBoruvka.append(menor)
-            else:
-                for i in range(len(listaConjuntos)):
-                    if (menor.getOrigen() in listaConjuntos[i]) and (menor.getDestino() in listaConjuntos[i]):
-                        return False
+        for i in uniones:
+            print(i)
 
-                for i in range(len(listaConjuntos)):
-                    if menor.getOrigen() in listaConjuntos[i]:
-                        encontrado1 = i
-                    if menor.getDestino() in listaConjuntos[i]:
-                        encontrado2= i
+        repetir = True
+        while repetir:
+            unir = []
+            unir.append(uniones.pop(0))
 
-                if encontrado1 != -1 and encontrado2 != -1:
-                    if encontrado1 != encontrado2:
-                        listaConjuntos[encontrado1].update(listaConjuntos[encontrado2])
-                        listaConjuntos[encontrado2].clear()
-                        aristasBoruvka.append(menor)
+            repetir = False
+            while len(uniones) != 0:
+                count = 0
+                i = 0
+                Crear = True
+                while i != len(unir):
+                    x = False
+                    for u in unir[i]:
+                        for j in uniones[0]:
+                            if j == u:
+                                x = True
+                    if x:
+                        count += 1
+                        for j in uniones[0]:
+                            unir[i].append(j)
+                        Crear = False
+                    i += 1
+                if Crear:
+                    unir.append([uniones[0][0], uniones[0][1]])
+                uniones.pop(0)
+                if count > 1:
+                    repetir = True
 
-                if encontrado1 != -1  and encontrado2 == -1:
-                    listaConjuntos[encontrado1].update(menor.getOrigen())
-                    listaConjuntos[encontrado1].update(menor.getDestino())
-                    aristasBoruvka.append(menor)
+            for conjunto in unir:
+                uniones.append([])
+                for element in conjunto:
+                    if element not in uniones[len(uniones) - 1]:
+                        uniones[len(uniones) - 1].append(element)
 
-                if encontrado1 == -1 and encontrado2 != -1:
-                    listaConjuntos[encontrado2].update(menor.getOrigen())
-                    listaConjuntos[encontrado2].update(menor.getDestino())
-                    aristasBoruvka.append(menor)
+        print(uniones)
+        verticeTemp = []
+        conjuntoAristasTemp = []
+        for i in uniones:
+            verticeTemp.append([])
+            conjuntoAristasTemp.append([])
+            for j in i:
+                for x in conjuntoVertices[j]:
+                    verticeTemp[len(verticeTemp) - 1].append(x)
+                for y in conjuntoAristas[j]:
+                    conjuntoAristasTemp[len(conjuntoAristasTemp) - 1].append(y)
+        for i in verticeTemp:
+            for j in i:
+                print(j.getNombre())
+            print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+        for i in conjuntoAristasTemp:
+            for j in i:
+                print(j.getOrigen(),"---",j.getDestino(),"---->", j.getPeso())
+            print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
 
-                if encontrado1 == -1 and encontrado2 == -1:
-                    listaConjuntos.append({menor.getOrigen(), menor.getDestino()})
-                    aristasBoruvka.append(menor)
+        #  for i in uniones:
+
+    # def boruvka(self):
+    #     copiaVertices = copy(self.listaVertices)
+    #     copiaAristas = copy(self.listaAristas)
+    #     aristasBoruvka = []
+    #     listaConjuntos = []
+    #     bandera = True
+    #     cantidad = 0
+    #     while(cantidad > 1 or bandera):
+    #         for vertice in copiaVertices:
+    #             self.operacinesCunjuntosB(vertice, listaConjuntos, aristasBoruvka, copiaAristas)
+    #         bandera = False
+    #         cantidad = self.cantidadConjuntos(listaConjuntos)
+    #     return aristasBoruvka
+    #
+    # def cantidadConjuntos(self,listaConjuntos):
+    #     cantidad = 0
+    #     for conjunto in listaConjuntos:
+    #         if len(conjunto) > 0:
+    #             cantidad = cantidad + 1
+    #     return cantidad
+    #
+    # def ordenar(self, aristas):
+    #     for i in range(len(aristas)):
+    #         for j in range(len(aristas)):
+    #                 if aristas[i].getPeso() < aristas[j].getPeso():
+    #                     temp = aristas[i]
+    #                     aristas[i] = aristas [j]
+    #                     aristas[j] = temp
+    # def buscarMenor(self, vertice, copiaAristas):
+    #     temp = []
+    #     for adyacencia in vertice.getListaAdyacentes():
+    #         for arista in copiaAristas:
+    #             if arista.getOrigen() == vertice.getNombre() and arista.getDestino() == adyacencia:
+    #                 temp.append(arista)
+    #     if temp:
+    #         self.ordenar(temp)
+    #
+    #         vertice.getListaAdyacentes().remove(temp[0].getDestino())
+    #         return temp[0]
+    #     return None
+    #
+    #
+    # def operacinesCunjuntosB(self, vertice, listaConjuntos, aristasBoruvka, copiaAristas):
+    #     encontrado1 = -1
+    #     encontrado2 = -1
+    #     menor = self.buscarMenor(vertice, copiaAristas)
+    #
+    #     if not menor == None:
+    #         if not listaConjuntos:
+    #             listaConjuntos.append({menor.getOrigen(), menor.getDestino()})
+    #             aristasBoruvka.append(menor)
+    #         else:
+    #             for i in range(len(listaConjuntos)):
+    #                 if (menor.getOrigen() in listaConjuntos[i]) and (menor.getDestino() in listaConjuntos[i]):
+    #                     return False
+    #
+    #             for i in range(len(listaConjuntos)):
+    #                 if menor.getOrigen() in listaConjuntos[i]:
+    #                     encontrado1 = i
+    #                 if menor.getDestino() in listaConjuntos[i]:
+    #                     encontrado2= i
+    #
+    #             if encontrado1 != -1 and encontrado2 != -1:
+    #                 if encontrado1 != encontrado2:
+    #                     listaConjuntos[encontrado1].update(listaConjuntos[encontrado2])
+    #                     listaConjuntos[encontrado2].clear()
+    #                     aristasBoruvka.append(menor)
+    #
+    #             if encontrado1 != -1  and encontrado2 == -1:
+    #                 listaConjuntos[encontrado1].update(menor.getOrigen())
+    #                 listaConjuntos[encontrado1].update(menor.getDestino())
+    #                 aristasBoruvka.append(menor)
+    #
+    #             if encontrado1 == -1 and encontrado2 != -1:
+    #                 listaConjuntos[encontrado2].update(menor.getOrigen())
+    #                 listaConjuntos[encontrado2].update(menor.getDestino())
+    #                 aristasBoruvka.append(menor)
+    #
+    #             if encontrado1 == -1 and encontrado2 == -1:
+    #                 listaConjuntos.append({menor.getOrigen(), menor.getDestino()})
+    #                 aristasBoruvka.append(menor)
 
 
     # dijkstra
