@@ -27,48 +27,52 @@ with open(r'C:\Users\2003n\OneDrive\Escritorio\proyecto_librerias\data\rutas.jso
     for r in rutasData:
         aux = Arista(**r)
         grafo.ingresarArista(aux.getOrigen(), aux.getDestino(), aux.getPeso())
+grafo.dirigido()
+grafo.nodirigido()
+grafo.recorridoAmplitud("Libreria Celsius")
+grafo.recorridoProfundidad("Libreria Celsius")
+solucion_boruvka = grafo.boruvka()
+solucion_prim = grafo.prim()
+solucion_kruskal = grafo.kruskal()
+solucion_caminoBloqueado = grafo.caminoBloqueado("Libreria Celsius","Libreria Gadner")
+solucion_dijkstra = grafo.dijkstra("Libreria Celsius","Libreria Gadner")
+
+# print("Solucion boruvka")
+# for i in solucion_boruvka:
+#     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
+#
+# print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+# print("Solucion kruskal")
+# for i in solucion_kruskal:
+#     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
+#
+# print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+# print("Solucion dijkstra")
+# for i in solucion_dijkstra:
+#     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
+#
+# print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+# print("Solucion camino bloqueado")
+# for i in solucion_caminoBloqueado:
+#     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
 
 
-grafo.boruvka()
-# # uniones = [[0,1],[1,7],[2,3],[3,4], [7,4]]
-# uniones = [[0,1],[2,1],[3,4],[4,7], [7,1],[5,6],[6,1]]
 #
-# for i in uniones:
-#     print(i)
-#
-# repetir = True
-# while repetir:
-#     unir = []
-#     unir.append(uniones.pop(0))
-#
-#     repetir = False
-#     while len(uniones) != 0:
-#         count = 0
-#         i = 0
-#         Crear = True
-#         while i != len(unir):
-#             x = False
-#             for u in unir[i]:
-#                 for j in uniones[0]:
-#                     if j == u:
-#                         x = True
-#             if x:
-#                 count += 1
-#                 for j in uniones[0]:
-#                     unir[i].append(j)
-#                 Crear = False
-#             i += 1
-#         if Crear:
-#             unir.append([uniones[0][0],uniones[0][1]])
-#         uniones.pop(0)
-#         if count > 1:
-#             repetir = True
-#
-#     for conjunto in unir:
-#         uniones.append([])
-#         for element in conjunto:
-#             if element not in uniones[len(uniones)-1]:
-#                 uniones[len(uniones) - 1].append(element)
+# print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+# print("Solucion prim")
+# for i in solucion_prim:
+#     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
 #
 #
-# print(uniones)
+print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+print("Solucion amplitud")
+for i in grafo.getAmplitud():
+    print(i)
+    # print(i.getOrigen(), "----", i.getDestino(), "--->", i.getPeso())
+
+print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
+print("Solucion profundidad")
+for i in grafo.getProfundidad()     :
+    print(i)
+    # print(i.getOrigen(), "----", i.getDestino(), "--->", i.getPeso())
+

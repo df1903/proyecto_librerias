@@ -14,7 +14,7 @@ class Grafo:
         self.listaAristas = []
         self.profundidad = []
         self.amplitud = []
-        self.caminoBloqueado = []
+
     """————————————————————————————————————————————GETS | SETS————————————————————————————————————————————————————"""
 
     # Set - Get | lista de vertices
@@ -45,12 +45,12 @@ class Grafo:
     def setAmplitud(self,amplitud):
         self.amplitud = amplitud
 
-    # Set - Get | camino bloqueado
-    def getCaminoBloqueado(self):
-        return self.caminoBloqueado
-
-    def setCaminoBloqueado(self, caminoBloqueado):
-        self.caminoBloqueado = caminoBloqueado
+    # # Set - Get | camino bloqueado
+    # def getCaminoBloqueado(self):
+    #     return self.caminoBloqueado
+    #
+    # def setCaminoBloqueado(self, caminoBloqueado):
+    #     self.caminoBloqueado = caminoBloqueado
 
     """—————————————————————————————————————————FUNCIONES VERTICE————————————————————————————————————————————————"""
 
@@ -88,6 +88,22 @@ class Grafo:
                 self.obtenerVertice(origen, self.listaVertices).getListaAdyacentes().append(destino)
                 # return True
         # return False
+    def eliminarArista(self, origen, destino):
+
+        verticeOrigen = self.obtenerVertice(origen, self.listaVertices)
+        aristaOrigen = self.obtenerArista(origen, destino, self.listaAristas)
+        if aristaOrigen:
+            verticeOrigen.getListaAdyacentes().pop(verticeOrigen.getListaAdyacentes().index(destino))
+            self.listaAristas.pop(self.listaAristas.index(aristaOrigen))
+
+        verticeDestino = self.obtenerVertice(destino, self.listaVertices)
+        aristaDestino = self.obtenerArista(destino, origen, self.listaAristas)
+        if aristaDestino:
+            verticeDestino.getListaAdyacentes().pop(verticeDestino.getListaAdyacentes().index(origen))
+            self.listaAristas.pop(self.listaAristas.index(aristaDestino))
+
+
+
 
     # existe arista
     def existeArista(self, origen, destino, lista):
@@ -181,6 +197,17 @@ class Grafo:
     # algoritmo de kruskal
     def kruskal(self):
         aristas = copy(self.listaAristas)
+
+        # eliminar aristas repetidas
+        for i in aristas:
+            arista = False
+            for j in aristas:
+                if i.getOrigen() == j.getDestino() and i.getDestino() == j.getOrigen():
+                    arista = j
+                    break
+            if arista:
+                aristas.pop(aristas.index(arista))
+
         visitados = []  # para vetices visitados
 
         for v in self.listaVertices:# inicializar con el tamaño de los vertice con false
@@ -193,6 +220,7 @@ class Grafo:
         for vis in aristas:  # eliminar aristas que formen ciclos
             if visitados[self.listaVertices.index(self.obtenerVertice(vis.getDestino(), self.listaVertices))] == True:
                 aristas.pop(aristas.index(vis))
+
         menor = aristas[0]
         for a in aristas:  # obtener arista de menor peso
             if a.getPeso() < menor.getPeso():
@@ -263,6 +291,8 @@ class Grafo:
 
     # boruvka
     def boruvka(self):
+
+        # crear listas
         conjuntoVertices = [] # conjunto con conjunto de vertices
         conjuntoAristas = [] # conjunto solucion
         copiaAristas = copy(self.listaAristas) # conjunto de donde se extraeran aristas
@@ -273,28 +303,28 @@ class Grafo:
             conjuntoAristas.append([])
             conjuntoVertices[len(conjuntoVertices)-1].append(i)
 
-        # for i in conjuntoVertices:
-        #     print(i)
-        #
-        # for i in conjuntoAristas:
-        #     print(i)
-        #
-        # for i in copiaAristas:
-        #     print(i.getOrigen(),i.getDestino(),i.getPeso())
+        # almacena el arbol de expancion minimo por boruvka
+        return self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
 
-        aristas = self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
-        print("solucion")
-        for j in aristas:
-            for i in j:
-                print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
+        # aristas = self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
+        # print("solucion")
+        # for i in j:
+        #     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
 
     def ordenarBoruvka(self, conjuntoVertices, copiaAristas, conjuntoAristas):
-        if len(conjuntoVertices) == 1:
-            return conjuntoAristas
+
+        # retorna cunado en conjunto solucion tenga la union de todos los vertices
+        if len(conjuntoAristas) == 1:
+            solucion = []
+            for i in conjuntoAristas:
+                for j in i:
+                    solucion.append(j)
+            return solucion
+
         aristasTemp = []
         uniones = []
-        print("tamaño copiaAristas", len(copiaAristas))
-        # encontrar menor
+
+        # encontrar menor de cada conjunto de veritces
         for listaVeritices in conjuntoVertices:
             menor = (Arista("x", "x", float("inf")))
             for vertice in listaVeritices:
@@ -302,19 +332,9 @@ class Grafo:
                     if arista.getOrigen() == vertice.getNombre():
                         if arista.getPeso() < menor.getPeso():
                             menor = arista
-            # aristasTemp.append([])
-            # aristasTemp[len(aristasTemp)-1]
             copiaAristas.pop(copiaAristas.index(menor))
             conjuntoAristas[conjuntoVertices.index(listaVeritices)].append(menor)
             aristasTemp.append(menor)
-            print("menor")
-            print(menor.getOrigen(),"----", menor.getDestino(),"--->", menor.getPeso())
-        print("tamaño copiaAristas", len(copiaAristas))
-
-        # print("menor")
-        # for i in aristasTemp:
-        #     print(i.getOrigen(),"---",i.getDestino(),"---->", i.getPeso())
-
 
         # verificar uniones
         for listaVeritices in conjuntoVertices:
@@ -324,21 +344,22 @@ class Grafo:
                          if vertice.getNombre() == arista.getDestino():
                             uniones.append([conjuntoVertices.index(listaVeritices), aristasTemp.index(arista)])
 
-        # print("verificar uniones")
-        # for i in uniones:
-        #     print(i)
-
+        # encuentra las uniones de los conjuntos
         repetir = True
         while repetir:
+
+            repetir = False
             unir = []
             unir.append(uniones.pop(0))
 
-            repetir = False
             while len(uniones) != 0:
+
                 count = 0
                 i = 0
                 Crear = True
+
                 while i != len(unir):
+
                     x = False
                     for u in unir[i]:
                         for j in uniones[0]:
@@ -362,9 +383,10 @@ class Grafo:
                     if element not in uniones[len(uniones) - 1]:
                         uniones[len(uniones) - 1].append(element)
 
-        print(uniones)
         verticeTemp = []
         conjuntoAristasTemp = []
+
+        # une los conjuntos
         for i in uniones:
             verticeTemp.append([])
             conjuntoAristasTemp.append([])
@@ -374,14 +396,7 @@ class Grafo:
                 for y in conjuntoAristas[j]:
                     conjuntoAristasTemp[len(conjuntoAristasTemp) - 1].append(y)
 
-        for i in conjuntoAristasTemp:
-            for j in i:
-                print(j.getOrigen(),"---",j.getDestino(),"---->", j.getPeso())
-            print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
-
-        conjuntoAristas = []
         # eliminar aristas repetidas
-
         for i in range(len(conjuntoAristasTemp)):
             for j in conjuntoAristasTemp[i]:
                 arista = False
@@ -391,8 +406,8 @@ class Grafo:
                         break
                 if arista:
                     conjuntoAristasTemp[i].pop(conjuntoAristasTemp[i].index(arista))
-        print("tamaño copiaAristas", len(copiaAristas))
 
+        # elimina aristas que pueden formar ciclos
         for i in verticeTemp:
             for j in i:
                 for x in copiaAristas:
@@ -400,108 +415,8 @@ class Grafo:
                         for y in i:
                             if x.getDestino() == y.getNombre():
                                 copiaAristas.pop(copiaAristas.index(x))
-        print("tamaño copiaAristas", len(copiaAristas))
-
-        for i in copiaAristas:
-            print(i.getOrigen(), i.getDestino(), i.getPeso())
 
         return self.ordenarBoruvka(verticeTemp, copiaAristas, conjuntoAristasTemp)
-
-        # eliminar aristas que formen ciclos
-
-        # for i in verticeTemp:
-        #     for j in i:
-        #         print(j.getNombre())
-        #     print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
-        # for i in conjuntoAristas:
-        #     for j in i:
-        #         print(j.getOrigen(),"---",j.getDestino(),"---->", j.getPeso())
-        #     print("▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄")
-
-        #  for i in uniones:
-
-    # def boruvka(self):
-    #     copiaVertices = copy(self.listaVertices)
-    #     copiaAristas = copy(self.listaAristas)
-    #     aristasBoruvka = []
-    #     listaConjuntos = []
-    #     bandera = True
-    #     cantidad = 0
-    #     while(cantidad > 1 or bandera):
-    #         for vertice in copiaVertices:
-    #             self.operacinesCunjuntosB(vertice, listaConjuntos, aristasBoruvka, copiaAristas)
-    #         bandera = False
-    #         cantidad = self.cantidadConjuntos(listaConjuntos)
-    #     return aristasBoruvka
-    #
-    # def cantidadConjuntos(self,listaConjuntos):
-    #     cantidad = 0
-    #     for conjunto in listaConjuntos:
-    #         if len(conjunto) > 0:
-    #             cantidad = cantidad + 1
-    #     return cantidad
-    #
-    # def ordenar(self, aristas):
-    #     for i in range(len(aristas)):
-    #         for j in range(len(aristas)):
-    #                 if aristas[i].getPeso() < aristas[j].getPeso():
-    #                     temp = aristas[i]
-    #                     aristas[i] = aristas [j]
-    #                     aristas[j] = temp
-    # def buscarMenor(self, vertice, copiaAristas):
-    #     temp = []
-    #     for adyacencia in vertice.getListaAdyacentes():
-    #         for arista in copiaAristas:
-    #             if arista.getOrigen() == vertice.getNombre() and arista.getDestino() == adyacencia:
-    #                 temp.append(arista)
-    #     if temp:
-    #         self.ordenar(temp)
-    #
-    #         vertice.getListaAdyacentes().remove(temp[0].getDestino())
-    #         return temp[0]
-    #     return None
-    #
-    #
-    # def operacinesCunjuntosB(self, vertice, listaConjuntos, aristasBoruvka, copiaAristas):
-    #     encontrado1 = -1
-    #     encontrado2 = -1
-    #     menor = self.buscarMenor(vertice, copiaAristas)
-    #
-    #     if not menor == None:
-    #         if not listaConjuntos:
-    #             listaConjuntos.append({menor.getOrigen(), menor.getDestino()})
-    #             aristasBoruvka.append(menor)
-    #         else:
-    #             for i in range(len(listaConjuntos)):
-    #                 if (menor.getOrigen() in listaConjuntos[i]) and (menor.getDestino() in listaConjuntos[i]):
-    #                     return False
-    #
-    #             for i in range(len(listaConjuntos)):
-    #                 if menor.getOrigen() in listaConjuntos[i]:
-    #                     encontrado1 = i
-    #                 if menor.getDestino() in listaConjuntos[i]:
-    #                     encontrado2= i
-    #
-    #             if encontrado1 != -1 and encontrado2 != -1:
-    #                 if encontrado1 != encontrado2:
-    #                     listaConjuntos[encontrado1].update(listaConjuntos[encontrado2])
-    #                     listaConjuntos[encontrado2].clear()
-    #                     aristasBoruvka.append(menor)
-    #
-    #             if encontrado1 != -1  and encontrado2 == -1:
-    #                 listaConjuntos[encontrado1].update(menor.getOrigen())
-    #                 listaConjuntos[encontrado1].update(menor.getDestino())
-    #                 aristasBoruvka.append(menor)
-    #
-    #             if encontrado1 == -1 and encontrado2 != -1:
-    #                 listaConjuntos[encontrado2].update(menor.getOrigen())
-    #                 listaConjuntos[encontrado2].update(menor.getDestino())
-    #                 aristasBoruvka.append(menor)
-    #
-    #             if encontrado1 == -1 and encontrado2 == -1:
-    #                 listaConjuntos.append({menor.getOrigen(), menor.getDestino()})
-    #                 aristasBoruvka.append(menor)
-
 
     # dijkstra
     def dijkstra(self, origen, destino):
@@ -602,59 +517,12 @@ class Grafo:
             aux = verticesAux[indice]
         verticesD.insert(0, aux)
 
-    # dijkstraBlock
-    def dijkstraBlock(self, origen, destino):
-        self.setCaminoBloqueado(self.dijkstra(origen, destino))
-        verticesAux = []
-        verticesD = []
-        caminos = self.ordenarDijkstraBlock(origen, verticesAux)
-        cont = 0
-        self.rutas(verticesD, verticesAux, destino, origen)
-        aristas = []
-        for i in range(len(verticesD) - 1):
-            aristas.append(self.obtenerArista(verticesD[i], verticesD[i + 1], self.listaAristas))
-        return aristas
 
-    def ordenarDijkstraBlock(self, origen, verticesAux):
-        visitados = []  # lista de visitados
-        caminos = []  # recorrido final
-
-        for v in self.listaVertices:  # iniciar los valores en infinito
-            caminos.append(float("inf"))
-            visitados.append(False)
-            verticesAux.append(None)
-            if v.getNombre() == origen:
-                caminos[self.listaVertices.index(v)] = 0
-                verticesAux[self.listaVertices.index(v)] = v.getNombre()
-
-        while not self.todosVisitados(visitados):
-            menorAux = self.menorNoVisitado(caminos, visitados)  # obtiene el menor no visitado
-            if menorAux == None:
-                break
-            indice = self.listaVertices.index(menorAux)  # indice del menor no marcado
-            visitados[indice] = True
-            valorActual = caminos[indice]
-
-            for adyacencia in menorAux.getListaAdyacentes():
-                if self.viaBloqueada(self.obtenerArista(menorAux.getNombre(), adyacencia, self.listaAristas)):
-                    indiceNuevo = self.listaVertices.index(self.obtenerVertice(adyacencia, self.listaVertices))
-                    arista = self.verificarAristaBlock(menorAux.getNombre(), adyacencia)
-                    if caminos[indiceNuevo] > valorActual + arista.getPeso():
-                        caminos[indiceNuevo] = valorActual + arista.getPeso()
-                        verticesAux[indiceNuevo] = self.listaVertices[indice].getNombre()
-
-        return caminos
-
-    def verificarAristaBlock(self, origen, destino):
-        for i in range(len(self.listaAristas)):
-            if self.viaBloqueada(self.listaAristas[i]):
-                if origen == self.listaAristas[i].getOrigen() and destino == self.listaAristas[i].getDestino():
-                    return self.listaAristas[i]
-
-        return None
-
-    def viaBloqueada(self, arista):
-        for i in self.caminoBloqueado:
-            arista == i
-            return False
-        return True
+    def caminoBloqueado(self, origen, destino):
+        lista = self.dijkstra(origen, destino)
+        for i in lista:
+            self.eliminarArista(i.getOrigen(), i.getDestino())
+        block = self.dijkstra(origen, destino)
+        for i in lista:
+            self.ingresarArista(i.getOrigen(), i.getDestino(), i.getPeso())
+        return block
