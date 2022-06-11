@@ -45,13 +45,6 @@ class Grafo:
     def setAmplitud(self,amplitud):
         self.amplitud = amplitud
 
-    # # Set - Get | camino bloqueado
-    # def getCaminoBloqueado(self):
-    #     return self.caminoBloqueado
-    #
-    # def setCaminoBloqueado(self, caminoBloqueado):
-    #     self.caminoBloqueado = caminoBloqueado
-
     """—————————————————————————————————————————FUNCIONES VERTICE————————————————————————————————————————————————"""
 
     # ingresar vertice
@@ -103,8 +96,6 @@ class Grafo:
             self.listaAristas.pop(self.listaAristas.index(aristaDestino))
 
 
-
-
     # existe arista
     def existeArista(self, origen, destino, lista):
         for i in lista:
@@ -136,6 +127,7 @@ class Grafo:
                           i.getListaAdyacentes()))
 
     """—————————————————————————————————————————————FUNCTIONS————————————————————————————————————————————————————————"""
+
 
     # convertir dirigido a no dirigido
     def nodirigido(self):
@@ -306,11 +298,6 @@ class Grafo:
         # almacena el arbol de expancion minimo por boruvka
         return self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
 
-        # aristas = self.ordenarBoruvka(conjuntoVertices, copiaAristas, conjuntoAristas)
-        # print("solucion")
-        # for i in j:
-        #     print(i.getOrigen(),"----", i.getDestino(),"--->", i.getPeso())
-
     def ordenarBoruvka(self, conjuntoVertices, copiaAristas, conjuntoAristas):
 
         # retorna cunado en conjunto solucion tenga la union de todos los vertices
@@ -335,6 +322,7 @@ class Grafo:
             copiaAristas.pop(copiaAristas.index(menor))
             conjuntoAristas[conjuntoVertices.index(listaVeritices)].append(menor)
             aristasTemp.append(menor)
+
 
         # verificar uniones
         for listaVeritices in conjuntoVertices:
@@ -519,10 +507,14 @@ class Grafo:
 
 
     def caminoBloqueado(self, origen, destino):
-        lista = self.dijkstra(origen, destino)
+        lista = self.dijkstra(origen, destino)  
         for i in lista:
             self.eliminarArista(i.getOrigen(), i.getDestino())
         block = self.dijkstra(origen, destino)
         for i in lista:
             self.ingresarArista(i.getOrigen(), i.getDestino(), i.getPeso())
+
         return block
+
+
+
